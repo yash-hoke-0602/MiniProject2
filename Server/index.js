@@ -7,18 +7,22 @@ const PORT = 5000;
 const { mogoUrl } = require("./keys");
 
 require("./models/User");
-require("./models/noticeboard")
+require("./models/noticeboard");
 const requireToken = require("./middleware/requireToken");
 const authRoutes = require("./routes/authRoutes");
 const noticeBoardRoutes = require("./routes/noticeBoardRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 
 //middlewares
 
 app.use(express.json());
 app.use("/", authRoutes);
 app.use("/noticeBoard", noticeBoardRoutes);
-
+app.use("/profile", profileRoutes);
+app.use(express.static("images"));
 //connect to database
+//Serves all the request which includes /images in the url from Images folder
+app.use("/profiles", express.static(__dirname + "images/profiles"));
 
 mongoose.connect(mogoUrl, {
   useNewUrlParser: true,
@@ -35,7 +39,7 @@ mongoose.connection.on("error", (err) => {
 });
 
 app.get("/", requireToken, (req, res) => {
-  res.send({ email: req.user.email });
+  res.send({ email: req.user.email, userId: req.user._id });
 });
 
 //start server

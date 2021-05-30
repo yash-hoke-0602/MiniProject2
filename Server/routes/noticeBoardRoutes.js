@@ -1,19 +1,18 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
-const Noticeboard = mongoose.model('Noticeboard');
+const Noticeboard = mongoose.model("Noticeboard");
 router.post("/admin/add", async (req, res) => {
   //add data
   const notice = new Noticeboard(req.body);
 
   try {
     await notice.save();
-    res.send("Data added")
+    res.send("Data added");
     console.log("data Added");
   } catch (error) {
     console.log("data not Added");
   }
-  
 });
 
 router.post("/admin/delete", async (req, res) => {
@@ -22,11 +21,11 @@ router.post("/admin/delete", async (req, res) => {
 });
 
 router.get("/view", async (req, res) => {
-  //show data
-   const notice = await Noticeboard.find({});
+  console.log("noticeRoute");
+  const notice = await Noticeboard.find({});
 
   try {
-   res.send(notice);
+    res.send(notice);
   } catch (error) {
     res.send("Error in data sent");
   }
