@@ -17,18 +17,15 @@ router.post("/admin/add", async (req, res) => {
 
 router.post("/admin/delete", async (req, res) => {
   //delete data
-  console.log("data Delted");
+  console.log("data Deleted");
 });
 
-router.get("/view", async (req, res) => {
-  console.log("noticeRoute");
-  const notice = await Noticeboard.find({});
-
-  try {
-    res.send(notice);
-  } catch (error) {
-    res.send("Error in data sent");
-  }
+router.get("/view", (req, res) => {
+  Noticeboard.find({}, "email text", (err, data) => {
+    if (err) return res.send({ error: "error occured" });
+    //console.log(data);
+    res.send(data);
+  });
 });
 
 module.exports = router;

@@ -8,6 +8,8 @@ const { mogoUrl } = require("./keys");
 
 require("./models/User");
 require("./models/noticeboard");
+require("./models/Profiles");
+
 const requireToken = require("./middleware/requireToken");
 const authRoutes = require("./routes/authRoutes");
 const noticeBoardRoutes = require("./routes/noticeBoardRoutes");
