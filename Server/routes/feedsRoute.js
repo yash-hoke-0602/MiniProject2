@@ -31,3 +31,4 @@ app.post("/upload", upload.single("file"), ({ body, file }, res) => {
     },
   });
 });
+//addfolder,deletefolder,addpost,deletepost
