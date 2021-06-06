@@ -1,7 +1,9 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
+
 const Noticeboard = mongoose.model("Noticeboard");
+
 router.post("/admin/add", async (req, res) => {
   //add data
   const notice = new Noticeboard(req.body);

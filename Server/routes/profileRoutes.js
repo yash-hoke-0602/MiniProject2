@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const multer = require("multer");
+
 const Profile = mongoose.model("Profile");
 
 const requireToken = require("../middleware/requireToken");
@@ -40,30 +41,44 @@ router.post(
 //send the profile data of user using req.user._id
 
 router.get("/", requireToken, (req, res) => {
-  Profile.findOne({ userid: req.user._id }, "image", (err, imgUrl) => {
+  Profile.findOne({ userid: req.user._id }, (err, profData) => {
     if (err) return console.log(err);
     // console.log(imgUrl.image);
-    res.status(200).json({
-      email: req.user.email,
-      img: imgUrl.image,
-    });
+    res.status(200).json({ profData, email: req.user.email });
   });
 });
 
 //update the profile data (overwrite new Data on current data)
 
 router.post("/update", requireToken, async (req, res) => {
-  //Profile.findone({userid:req.user._id});
-  Profile.deleteOne({ userid: req.user._id });
-  const profile = new Profile(req.body);
+  //console.log(typeof req.body.year);
+  const doc = await Profile.findOne({ userid: req.user._id });
+  doc.name = req.body.name;
+  doc.prn = req.body.PRN;
+  doc.branch = req.body.branch;
+  doc.year = Number(req.body.year);
+  doc.address = req.body.address;
+  doc.pointer = Number(req.body.pointer);
+  doc.internship = req.body.internship;
+  doc.acheivement = req.body.acheivement;
+  doc.placement = req.body.placement;
 
-  try {
-    await profile.save();
-    res.send("Data added");
-    console.log("data Added");
-  } catch (error) {
-    console.log("data not Added");
-  }
+  await doc.save();
+
+  res.status(200).json({
+    message: "success!",
+  });
+
+  // Profile.deleteOne({ userid: req.user._id });
+  // const profile = new Profile(req.body);
+
+  // try {
+  //   await profile.save();
+  //   res.send("Data added");
+  //   console.log("data Added");
+  // } catch (error) {
+  //   console.log("data not Added");
+  // }
 });
 
 module.exports = router;

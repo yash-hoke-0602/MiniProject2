@@ -20,12 +20,14 @@ const profileSchema = new Schema({
   },
   year: {
     type: Number,
+    default: 0,
   },
   address: {
     type: String,
   },
   pointer: {
     type: Number,
+    default: 0,
   },
   internship: {
     type: String,

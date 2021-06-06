@@ -9,22 +9,27 @@ const { mogoUrl } = require("./keys");
 require("./models/User");
 require("./models/noticeboard");
 require("./models/Profiles");
+require("./models/Folders");
+require("./models/Posts");
 
 const requireToken = require("./middleware/requireToken");
 const authRoutes = require("./routes/authRoutes");
 const noticeBoardRoutes = require("./routes/noticeBoardRoutes");
 const profileRoutes = require("./routes/profileRoutes");
-
+const feedsRoutes = require("./routes/feedsRoute");
 //middlewares
 
 app.use(express.json());
 app.use("/", authRoutes);
 app.use("/noticeBoard", noticeBoardRoutes);
 app.use("/profile", profileRoutes);
+app.use("/feeds", feedsRoutes);
+
 app.use(express.static("images"));
 //connect to database
 //Serves all the request which includes /images in the url from Images folder
 app.use("/profiles", express.static(__dirname + "images/profiles"));
+app.use("/feeds", express.static(__dirname + "/feeds"));
 
 mongoose.connect(mogoUrl, {
   useNewUrlParser: true,
