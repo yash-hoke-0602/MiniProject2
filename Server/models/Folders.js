@@ -6,21 +6,22 @@ const folderSchema = new Schema({
     type: Schema.Types.ObjectId,
     required: true,
   },
-  author:{
-  	type:String;
-  	required:true;
-  }
+  author: {
+    type: String,
+    required: true,
+  },
   foldername: {
     type: String,
-    required:true;
+    required: true,
   },
   foldertag: {
     type: String,
-    required:true;
+    required: true,
   },
- date:{ type:Date,
-    default:Date.now
- }
+  folderdescription: {
+    type: String,
+  },
+  date: { type: Date, default: Date.now },
 });
 
 mongoose.model("Folder", folderSchema);

@@ -19,46 +19,103 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage });
 
-app.post("/upload", upload.single("file"), ({ body, file }, res) => {
-  console.log(body);
-  console.log(file);
-  res.json({
-    status: "SUCCESS",
-    responseData: {
-      body: body,
-      file: file,
-    },
-  });
+router.post("/upload", upload.single("file"), async ({ body, file }, res) => {
+  // console.log(body);
+  // console.log(file);
+
+  const data = {
+    folderid: body.folderId,
+    postaddress: file.filename,
+    postname: file.originalname,
+  };
+  const posts = new Posts(data);
+
+  try {
+    await posts.save();
+    res.json({
+      status: "SUCCESS",
+      responseData: {
+        msg: "post added",
+      },
+    });
+  } catch (error) {
+    console.log("Folder not Created");
+  }
+});
+
+//get all posts from a folder
+
+router.get("/posts/:folderId", (req, res) => {
+  Posts.find(
+    { folderid: req.params.folderId },
+    "postaddress postname",
+    (err, data) => {
+      if (err) return res.send({ error: "error occured" });
+      console.log(data);
+      res.send(data);
+    }
+  );
 });
 
 //addfolder,deletefolder,addpost,deletepost
 
-router.get("/addfolder", async (req, res) => {
-    const folder = new Folders(req.body);
+router.get("/folders", requireToken, async (req, res) => {
+  Folders.find(
+    { userid: req.user._id },
+    "foldername foldertag folderdescription",
+    (err, data) => {
+      if (err) return res.send({ error: "error occured" });
+      //console.log(data);
+      res.send(data);
+    }
+  );
+});
+
+router.post("/addfolder", requireToken, async (req, res) => {
+  const data = {
+    userid: req.user._id,
+    author: req.user.email,
+    foldername: req.body.folderName,
+    foldertag: req.body.folderTag,
+    folderdescription: req.body.folderDesc,
+  };
+  const folder = new Folders(data);
+  // console.log(folder);
 
   try {
     await folder.save();
-    res.send("Folder Created")
+    res.send({ folderId: folder._id });
     console.log("Folder Created");
   } catch (error) {
     console.log("Folder not Created");
-  }  
+  }
 });
-router.get("/deletefolder", async (req, res) => {
-    const post = await Folders.deleteOne({ userid: req.user._id }); 
-});
-router.get("/addpost", async (req, res) => {
-    const post = new Posts(req.body);
 
+router.get("/deletefolder/:folderId", async (req, res) => {
   try {
-    await post.save();
-    res.send("Post Created")
-    console.log("Post Created");
+    const folder = await Folders.deleteOne({ _id: req.params.folderId });
+
+    const post = await Posts.deleteMany({ folderid: req.params.folderId });
+
+    res.send({ msg: "Folder Deleted" });
+    console.log("Folder deleted");
   } catch (error) {
-    console.log("Post not Created");
-  }  
+    res.send({ msg: "error" });
+    console.log("Folder not deleted");
+  }
 });
-router.get("/deletepost", async (req, res) => {
-    const post= await Folders.deleteOne({ folderid: req.user._id }); 
+
+//deletePosts
+
+router.get("/deletepost/:postid", async (req, res) => {
+  try {
+    const post = await Posts.deleteOne({ _id: req.params.postid });
+    res.send({ msg: "Post Deleted" });
+    console.log("Post deleted");
+  } catch (error) {
+    res.send({ msg: "error" });
+    console.log("Post not deleted");
+  }
 });
+
 module.exports = router;

@@ -10,12 +10,10 @@ const postSchema = new Schema({
     type: String,
     required: true,
   },
-  postinfo: {
-    type: String,
-  },
- postaddress:{ type: String,
- 	
- }
+  // postinfo: {
+  //   type: String,
+  // },
+  postaddress: { type: String },
 });
 
 mongoose.model("Post", postSchema);
