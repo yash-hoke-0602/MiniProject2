@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const app = express();
 const PORT = 5000;
@@ -20,6 +21,7 @@ const feedsRoutes = require("./routes/feedsRoute");
 //middlewares
 
 app.use(express.json());
+app.use(cors());
 app.use("/", authRoutes);
 app.use("/noticeBoard", noticeBoardRoutes);
 app.use("/profile", profileRoutes);

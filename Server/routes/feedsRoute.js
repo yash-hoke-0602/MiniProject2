@@ -65,7 +65,22 @@ router.get("/folders", requireToken, async (req, res) => {
     "foldername foldertag folderdescription",
     (err, data) => {
       if (err) return res.send({ error: "error occured" });
-      //console.log(data);
+      console.log(data);
+      res.send(data);
+    }
+  );
+});
+
+router.get("/allFolders/:filters", async (req, res) => {
+  // console.log(req.params.filters);
+  var filterArray = req.params.filters.split(" ");
+  // console.log(filterArray);
+  Folders.find(
+    { foldertag: filterArray },
+    "foldername foldertag folderdescription author date",
+    (err, data) => {
+      if (err) return res.send({ error: "error occured" });
+      console.log(data);
       res.send(data);
     }
   );

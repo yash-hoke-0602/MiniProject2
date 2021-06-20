@@ -81,4 +81,12 @@ router.post("/update", requireToken, async (req, res) => {
   // }
 });
 
+router.get("/viewAll", (req, res) => {
+  Profile.find({}, (err, profData) => {
+    if (err) return console.log(err);
+    console.log(profData);
+    res.status(200).json(profData);
+  });
+});
+
 module.exports = router;
