@@ -21,6 +21,10 @@ const folderSchema = new Schema({
   folderdescription: {
     type: String,
   },
+  likeCount: {
+    type: Number,
+    default: 0,
+  },
   date: { type: Date, default: Date.now },
 });
 

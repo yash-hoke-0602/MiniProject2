@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const Folders = mongoose.model("Folder");
 const Posts = mongoose.model("Post");
+const Likes = mongoose.model("UserLike");
 
 const requireToken = require("../middleware/requireToken");
 
@@ -118,6 +119,51 @@ router.get("/deletefolder/:folderId", async (req, res) => {
     res.send({ msg: "error" });
     console.log("Folder not deleted");
   }
+});
+
+//like folder
+
+router.get("/likeFolder/:folderId", requireToken, async (req, res) => {
+  const Data = {
+    userid: req.user._id,
+    folderid: req.params.folderId,
+  };
+
+  const likes = new Likes(Data);
+
+  try {
+    await likes.save();
+    res.send({ folderId: req.params.folderId });
+  } catch (error) {
+    console.log("Folder not Created");
+  }
+});
+
+//unlike folder
+
+router.get("/unlikeFolder/:folderId", requireToken, async (req, res) => {
+  try {
+    const likes = await Likes.deleteOne({
+      folderid: req.params.folderId,
+      userid: req.user._id,
+    });
+
+    res.send({ msg: "like Deleted" });
+    console.log("like deleted");
+  } catch (error) {
+    res.send({ msg: "error" });
+    console.log("Folder not deleted");
+  }
+});
+
+//all Liked folders
+
+router.get("/allLikedFolders", requireToken, async (req, res) => {
+  Likes.find({ userid: req.user._id }, "folderid", (err, data) => {
+    if (err) return res.send({ error: "error occured" });
+    console.log(data);
+    res.send(data);
+  });
 });
 
 //deletePosts

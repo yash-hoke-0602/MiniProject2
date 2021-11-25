@@ -12,6 +12,7 @@ require("./models/noticeboard");
 require("./models/Profiles");
 require("./models/Folders");
 require("./models/Posts");
+require("./models/UserLike");
 
 const requireToken = require("./middleware/requireToken");
 const authRoutes = require("./routes/authRoutes");
