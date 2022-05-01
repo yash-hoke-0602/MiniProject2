@@ -13,12 +13,14 @@ require("./models/Profiles");
 require("./models/Folders");
 require("./models/Posts");
 require("./models/UserLike");
+require("./models/ReaderBot");
 
 const requireToken = require("./middleware/requireToken");
 const authRoutes = require("./routes/authRoutes");
 const noticeBoardRoutes = require("./routes/noticeBoardRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const feedsRoutes = require("./routes/feedsRoute");
+const readerBotRoutes = require("./routes/readerBotRoutes");
 //middlewares
 
 app.use(express.json());
@@ -27,12 +29,14 @@ app.use("/", authRoutes);
 app.use("/noticeBoard", noticeBoardRoutes);
 app.use("/profile", profileRoutes);
 app.use("/feeds", feedsRoutes);
+app.use("/readerBot", readerBotRoutes);
 
 app.use(express.static("images"));
 //connect to database
 //Serves all the request which includes /images in the url from Images folder
 app.use("/profiles", express.static(__dirname + "images/profiles"));
 app.use("/feeds", express.static(__dirname + "/feeds"));
+app.use("/readerDocs", express.static(__dirname + "/readerDocs"));
 
 mongoose.connect(mogoUrl, {
   useNewUrlParser: true,
