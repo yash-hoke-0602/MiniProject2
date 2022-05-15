@@ -14,6 +14,7 @@ const postSchema = new Schema({
   //   type: String,
   // },
   postaddress: { type: String },
+  postText: { type: String },
 });
 
 mongoose.model("Post", postSchema);

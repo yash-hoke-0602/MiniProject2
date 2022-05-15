@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const Folders = mongoose.model("Folder");
 const Posts = mongoose.model("Post");
 const Likes = mongoose.model("UserLike");
+const pdf = require("pdf-parse");
+const fs = require("fs");
 
 const requireToken = require("../middleware/requireToken");
 
@@ -23,25 +25,30 @@ var upload = multer({ storage: storage });
 router.post("/upload", upload.single("file"), async ({ body, file }, res) => {
   // console.log(body);
   // console.log(file);
+  const pdffile = fs.readFileSync("feeds/" + file.filename);
+  pdf(pdffile).then(async function (data) {
+    var pdfText = data.text;
+    console.log(pdfText);
+    const Info = {
+      folderid: body.folderId,
+      postaddress: file.filename,
+      postname: file.originalname,
+      postText: pdfText,
+    };
+    const posts = new Posts(Info);
 
-  const data = {
-    folderid: body.folderId,
-    postaddress: file.filename,
-    postname: file.originalname,
-  };
-  const posts = new Posts(data);
-
-  try {
-    await posts.save();
-    res.json({
-      status: "SUCCESS",
-      responseData: {
-        msg: "post added",
-      },
-    });
-  } catch (error) {
-    console.log("Folder not Created");
-  }
+    try {
+      await posts.save();
+      res.json({
+        status: "SUCCESS",
+        responseData: {
+          msg: "post added",
+        },
+      });
+    } catch (error) {
+      console.log("Folder not Created");
+    }
+  });
 });
 
 //get all posts from a folder

@@ -69,7 +69,7 @@ router.post(
   upload.single("photo"),
   requireToken,
   async (req, res) => {
-    // console.log("file", req.file.filename);
+    console.log("file", req.file.filename);
     // console.log(req.user);
     const doc = await ReaderDocs.findOne({ userid: req.user._id });
     if (!doc) {
@@ -106,14 +106,37 @@ router.post(
 );
 
 router.get("/convert", requireToken, (req, res) => {
-  // ReaderDocs.findOne({ userid: req.user._id }, (err, profData) => {
-  //   if (err) return console.log(err);
-  //   // console.log(imgUrl.image);
-  //   const pdffile = fs.readFileSync("readerDocs/" + profData.docaddress);
-  //   pdf(pdffile).then(function (data) {
-  //     res.status(200).json({ pdfText: data.text });
-  //   });
-  // });
+  ReaderDocs.findOne({ userid: req.user._id }, (err, profData) => {
+    if (err) return console.log(err);
+    // console.log(imgUrl.image);
+    const pdffile = fs.readFileSync("readerDocs/" + profData.docaddress);
+    pdf(pdffile).then(function (data) {
+      res.status(200).json({ pdfText: data.text });
+    });
+  });
+});
+
+router.get("/convertImage", requireToken, async (req, res) => {
+  ReaderDocs.findOne({ userid: req.user._id }, async (err, profData) => {
+    if (err) return console.log(err);
+    // console.log(imgUrl.image);
+    const pdffile = fs.readFileSync("readerDocs/" + profData.docaddress);
+    // (async () => {
+    await worker.load();
+    await worker.loadLanguage("eng");
+    await worker.initialize("eng");
+    await worker.setParameters({
+      tessedit_char_whitelist:
+        "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    });
+    const {
+      data: { text },
+    } = await worker.recognize(pdffile);
+    console.log(text);
+    // await worker.terminate();
+    res.status(200).json({ pdfText: text });
+    // })();
+  });
 });
 
 router.get("/getUser", requireToken, (req, res) => {

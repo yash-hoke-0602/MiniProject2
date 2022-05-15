@@ -21,6 +21,7 @@ const noticeBoardRoutes = require("./routes/noticeBoardRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const feedsRoutes = require("./routes/feedsRoute");
 const readerBotRoutes = require("./routes/readerBotRoutes");
+const BotsRoutes = require("./routes/botsRoutes");
 //middlewares
 
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use("/noticeBoard", noticeBoardRoutes);
 app.use("/profile", profileRoutes);
 app.use("/feeds", feedsRoutes);
 app.use("/readerBot", readerBotRoutes);
+app.use("/bots", BotsRoutes);
 
 app.use(express.static("images"));
 //connect to database
