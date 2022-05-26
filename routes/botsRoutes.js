@@ -50,4 +50,37 @@ router.post("/pdfSearch", (req, res) => {
   });
 });
 
+router.post("/chatBot", (req, res) => {
+  // console.log(req.body.userResponse);
+
+  // const commandArray = [
+  //   "name",
+  //   "prn",
+  //   "branch",
+  //   "year",
+  //   "address",
+  //   "internship",
+  //   "pointer",
+  //   "achievement",
+  //   "placement",
+  // ];
+
+  // var maxScore = 0.0;
+  var maxCommand = "year";
+  // for (var i = 0; i < commandArray.length; i++) {
+  //   const similarityScore = await similarity(
+  //     req.body.userResponse,
+  //     commandArray[i]
+  //   );
+  //   if (!(await isNaN(similarityScore))) {
+  //     if (similarityScore > maxScore) {
+  //       maxScore = similarityScore;
+  //       maxCommand = commandArray[i];
+  //     }
+  //   }
+  // }
+  console.log(maxCommand);
+  res.json({ commandResponse: maxCommand });
+});
+
 module.exports = router;
