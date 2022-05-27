@@ -7,6 +7,8 @@ const Likes = mongoose.model("UserLike");
 const pdf = require("pdf-parse");
 const fs = require("fs");
 
+var similarity = require("string-cosine-similarity");
+
 const requireToken = require("../middleware/requireToken");
 
 const router = express.Router();
@@ -184,6 +186,85 @@ router.get("/deletepost/:postid", async (req, res) => {
     res.send({ msg: "error" });
     console.log("Post not deleted");
   }
+});
+
+router.get("/recommendationFolders", requireToken, (req, res) => {
+  // console.log(req.params.filters);
+  // console.log(filterArray);
+
+  Likes.find({ userid: req.user._id }, "folderid", (err, likeData) => {
+    if (err) return res.send({ error: "error occured" });
+
+    var likedFolderId = likeData[0].folderid;
+    console.log(likedFolderId);
+    Folders.find(
+      { _id: likedFolderId },
+      "similarityTag foldername",
+      (err, tagData) => {
+        if (err) return res.send({ error: "error occured" });
+        Folders.find(
+          { foldertag: "Computer" },
+          "foldername foldertag folderdescription author date similarityTag",
+          (err, data) => {
+            if (err) return res.send({ error: "error occured" });
+            // var likeFolderTag = tagData[0].similarityTag;
+            // for (var item in tagData[0]) {
+            //   console.log("A1-" + tagData[item]);
+            // }
+            var ob = JSON.stringify(tagData[0]);
+            var likeFolderTag = "";
+            for (var i = 0; i < ob.length; i++) {
+              // console.log(ob.substring(i, i + 14));
+              if (ob.substring(i, i + 14) === 'similarityTag"') {
+                var j = i + 16;
+                while (ob[j] != '"') {
+                  j++;
+                }
+                likeFolderTag = ob.substring(i + 16, j);
+              }
+            }
+            // console.log("cool" + ob.charAt(3));
+            var objects = [];
+            for (var i = 0; i < data.length; i++) {
+              var ob2 = JSON.stringify(data[i]);
+              var string2 = ob2;
+              // console.log(string2);
+
+              var similarityScore = 0;
+              if (string2 && likeFolderTag) {
+                if (isNaN(similarity(string2, likeFolderTag))) {
+                  similarityScore = 0;
+                } else {
+                  similarityScore = similarity(string2, likeFolderTag);
+                  objects.push({
+                    similarity: similarityScore,
+                    postData: data[i],
+                  });
+                  // console.log(data[i]);
+                }
+              }
+            }
+            function compare_similarity(a, b) {
+              if (a.similarity < b.similarity) {
+                return 1;
+              }
+              if (a.similarity > b.similarity) {
+                return -1;
+              }
+              return 0;
+            }
+
+            objects.sort(compare_similarity);
+            console.log("Done");
+            console.log(objects);
+            res.json(objects);
+          }
+        );
+      }
+    );
+
+    // res.send(data);
+  });
 });
 
 module.exports = router;

@@ -83,4 +83,59 @@ router.post("/chatBot", (req, res) => {
   res.json({ commandResponse: maxCommand });
 });
 
+router.get("/movieGameBot", async (req, res) => {
+  console.log("Cool");
+  if (!req.session.moviesList) {
+    console.log("----------------------------");
+    const movieObject = {
+      avengers: false,
+      "baby boss": false,
+      cars: false,
+      "dark knight": false,
+      elysium: false,
+      "fast and furious": false,
+      "green lantern": false,
+      "happy new year": false,
+      interstellar: false,
+      joker: false,
+      "kung fu panda": false,
+      "life of pie": false,
+      "man of steel": false,
+      "no problem": false,
+      overlord: false,
+      pink: false,
+      quarantine: false,
+      "rush hour": false,
+      "spider Man": false,
+      tenet: false,
+      up: false,
+      venom: false,
+      wanted: false,
+      "x-men": false,
+      yaadein: false,
+      "zombie land": false,
+    };
+    req.session.moviesList = movieObject;
+    console.log(req.session.moviesList);
+  }
+  console.log("Cool2");
+  for (var item in req.session.moviesList) {
+    req.session.moviesList[item] = false;
+    console.log(item + "-" + req.session.moviesList[item]);
+  }
+  console.log(req.session.moviesList);
+  res.json({ movieList: req.session.moviesList });
+});
+
+router.post("/setMovieGameBot", async (req, res) => {
+  console.log(req.body.moviesList);
+  req.session.moviesList = req.body.moviesList;
+  res.json({ message: "success" });
+});
+
+router.get("/destroyMovieGameBot", async (req, res) => {
+  req.session.moviesList = null;
+  res.json({ message: "success" });
+});
+
 module.exports = router;

@@ -3,9 +3,12 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
+const cookieSession = require("cookie-session");
 const app = express();
 const PORT = process.env.PORT || 5000;
 const { mogoUrl } = require("./keys");
+
+app.use(cookieSession({ secret: "qwertyuioasdfghjkxcvbnm" }));
 
 require("./models/User");
 require("./models/noticeboard");
